@@ -15,10 +15,9 @@ from wtforms.validators import (
     Length,
     Optional,
 )
+import models
 
-from ... import models
-
-from ...form import Form
+from form import Form
 
 from .. import baseForms
 from .. import baseValidators

@@ -21,6 +21,7 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     ForeignKey,
+    JSON
 )
 
 from sqlalchemy.orm import (
@@ -124,4 +125,47 @@ class User(Base):
         return detail
 
 
+class Project(Base):
+    __tablename__ = 'project'
+    id = Column(GUID(),
+                default=uuid.uuid4,
+                primary_key=True)
+    project_name = Column(Unicode(30),
+                         nullable=False)
+    description = Column(UnicodeText,
+                         nullable=True)
+    create_time = Column(DateTime(timezone=True),
+                         nullable=False)
+    authority = Column(Boolean,
+                       nullable=False)
+    profile = Column(JSON,
+                     nullable=False)
+    user_id = Column(GUID(),
+                     ForeignKey('user.id'))
+    likes = Column(BigInteger,
+                   default=0)
+
+    def __init__(self, projectname=None, description=None,
+                 authority=None, profile=None):
+        self.project_name = projectname
+        self.description = description
+        self.create_time = util.get_utc_time()
+        self.authority = authority
+        self.profile = profile
+
+    def format_detail(self, get_user=True):
+        detail = {
+            'id': self.id.hex,
+            'project_name': self.projectname,
+            'description': self.description,
+            'create_time': self.create_time,
+            'likes': self.likes,
+            'authority': self.authority
+        }
+        if get_user:
+            detail['user'] = self.user.format_detail()
+        if self.profile:
+            detail['profile'] = self.profile
+
+        return detail
 
