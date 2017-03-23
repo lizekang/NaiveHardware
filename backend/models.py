@@ -131,7 +131,7 @@ class Project(Base):
                 default=uuid.uuid4,
                 primary_key=True)
     project_name = Column(Unicode(30),
-                         nullable=False)
+                          nullable=False)
     description = Column(UnicodeText,
                          nullable=True)
     create_time = Column(DateTime(timezone=True),
@@ -169,3 +169,15 @@ class Project(Base):
 
         return detail
 
+
+class Data(Base):
+    __tablename__ = 'data'
+    id = Column(GUID(),
+                default=uuid.uuid4,
+                primary_key=True)
+    project_name = Column(GUID(),
+                          ForeignKey('project.id'))
+    data_json = Column(JSON,
+                       nullable=True)
+    user_id = Column(GUID(),
+                     ForeignKey('user.id'))

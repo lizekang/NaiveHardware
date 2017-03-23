@@ -89,7 +89,7 @@ def banners_get(form, field):
 def user_get(form, field):
     _ = field.gettext
     return object_get(models.User.query,
-                      _('Invalid User.'))(form, field)
+                      _('Invalid user.'))(form, field)
 
 
 def photographer_get(form, field):
@@ -106,61 +106,19 @@ def photographers_get(form, field):
                               is_admin=False)(form, field)
 
 
-def home_photographers_get(form, field):
+def project_get(form, field):
     _ = field.gettext
-    return objects_get(models.HomePhotographer.query,
-                       _('Invalid Photographer.'))(form, field)
+    return object_get(models.Project.query,
+                      _('Invalid project'))(form, field)
 
 
-def home_collections_get(form, field):
+def projects_get(form, field):
     _ = field.gettext
-    return objects_get(models.HomeCollection.query,
-                       _('Invalid Work.'))(form, field)
+    return objects_get(models.Project.query,
+                       _('Invalid project'))(form, field)
 
 
-def styles_get(form, field):
-    _ = field.gettext
-    return objects_get(models.Style.query,
-                       _('Invalid Style.'))(form, field)
-
-
-def themes_get(form, field):
-    _ = field.gettext
-    return objects_get(models.Theme.query,
-                       _('Invalid Theme'))(form, field)
-
-
-def schools_get(form, field):
-    _ = field.gettext
-    return objects_get(models.School.query,
-                       _('Invalid School'))(form, field)
-
-
-def school_get(form, field):
-    _ = field.gettext
-    return object_get(models.School.query,
-                       _('Invalid School'))(form, field)
-
-
-def categories_get(form, field):
-    _ = field.gettext
-    return objects_get(models.Category.query,
-                       _('Invalid Category'))(form, field)
-
-
-def collection_get(form, field):
-    _ = field.gettext
-    return object_get(models.Collection.query,
-                      _('Invalid Collection'))(form, field)
-
-
-def collections_get(form, field):
-    _ = field.gettext
-    return objects_get(models.Collection.query,
-                       _('Invalid Collection'))(form, field)
-
-
-def user_collection_get(form, field):
+def user_projects_get(form, field):
     _ = field.gettext
     try:
         current_user = form.kwargs.get('current_user', None)
@@ -168,7 +126,7 @@ def user_collection_get(form, field):
     except AssertionError:
         raise ValidationError(_('Invalid collection.'))
 
-    return object_filter_get(current_user.collections,
+    return object_filter_get(current_user.projects,
                              _('Invalid collection.'))(form, field)
 
 
