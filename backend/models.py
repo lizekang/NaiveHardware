@@ -83,6 +83,14 @@ class User(Base):
                       nullable=True)
     username = Column(Unicode(30),
                       nullable=False)
+    projects = relationship('Project',
+                            backref='user',
+                            lazy='dynamic',
+                            foreign_keys="[Project.user_id]")
+    nick_name = Column(Unicode(50),
+                       nullable=False)
+    is_admin = Column(Boolean,
+                      default=False)
 
     def check_password(self, request_pwd):
         return util.check_password(request_pwd, self.password)
@@ -91,9 +99,10 @@ class User(Base):
         self.password = util.set_password(new_pwd)
 
     def __init__(self, username=None,
-                 number=None):
+                 number=None, nick_name=None):
         self.name = username
         self.create_time = util.get_utc_time()
+        self.nick_name = nick_name
         if number is None:
             self.number = User.query.count()
         else:
@@ -103,6 +112,7 @@ class User(Base):
         detail = {
             'id': self.id.hex,
             'name': self.name,
+            'nick_name': self.nick_name
         }
 
         if self.avatar:
@@ -144,14 +154,18 @@ class Project(Base):
                      ForeignKey('user.id'))
     likes = Column(BigInteger,
                    default=0)
+    change_time = Column(DateTime(timezone=True),
+                         nullable=False)
 
     def __init__(self, projectname=None, description=None,
-                 authority=None, profile=None):
+                 authority=None, profile=None, change_time=None):
         self.project_name = projectname
         self.description = description
         self.create_time = util.get_utc_time()
         self.authority = authority
         self.profile = profile
+        if not change_time:
+            self.change_time = util.get_utc_time()
 
     def format_detail(self, get_user=True):
         detail = {

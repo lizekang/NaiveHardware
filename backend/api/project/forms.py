@@ -21,15 +21,18 @@ from wtforms.fields import (
 
 import models
 from form import Form
+from ... import util
 
 from .. import baseForms
 from .. import baseValidators
 
 
 class ProjectForm(Form):
-    name = StringField('project_name')
+    project_name = StringField('project_name')
     description = TextAreaField('description')
     authority = BooleanField('authority')
+    change_time = util.get_utc_time()
+    # TODO : profile how to get
 
 
 class ProjectsForm(Form):
