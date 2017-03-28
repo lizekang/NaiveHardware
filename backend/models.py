@@ -148,22 +148,22 @@ class Project(Base):
                          nullable=False)
     authority = Column(Boolean,
                        nullable=False)
-    profile = Column(JSON,
-                     nullable=False)
     user_id = Column(GUID(),
                      ForeignKey('user.id'))
+    user = relationship('User',
+                        back_populates='projects')
     likes = Column(BigInteger,
                    default=0)
     change_time = Column(DateTime(timezone=True),
                          nullable=False)
+    project_profile = relationship('ProjectProfile', back_populates='project')
 
     def __init__(self, projectname=None, description=None,
-                 authority=None, profile=None, change_time=None):
+                 authority=None, change_time=None):
         self.project_name = projectname
         self.description = description
         self.create_time = util.get_utc_time()
         self.authority = authority
-        self.profile = profile
         if not change_time:
             self.change_time = util.get_utc_time()
 
@@ -184,14 +184,64 @@ class Project(Base):
         return detail
 
 
-class Data(Base):
-    __tablename__ = 'data'
-    id = Column(GUID(),
+class Sensor(Base):
+    __tablename__ = 'sensor'
+    uid = Column(GUID(),
+                 default=uuid.uuid4,
+                 primary_key=True)
+    id = Column(Unicode(30),
+                nullable=False)
+    type = Column(Unicode(50),
+                  nullable=False)
+    function = Column(Unicode(100),
+                      nullable=False)
+    arguments = Column(Unicode(50),
+                       nullable=True)
+    project_profile_id = Column(GUID,
+                                ForeignKey('project_profile.id'))
+    project_profile = relationship('ProjectProfile', back_populates='effector')
+
+    def __init__(self, id=None, type=None,
+                 function=None, arguments=None):
+        self.id = id
+        self.type = type
+        self.function = function
+        self.arguments = arguments
+
+
+class Effector(Base):
+    __tablename__ = 'effector'
+    uid = Column(GUID,
+                 default=uuid.uuid4,
+                 primary_key=True)
+    id = Column(Unicode(30),
+                nullable=False)
+    type = Column(Unicode(50),
+                  nullable=False)
+    function = Column(Unicode(100),
+                      nullable=False)
+    arguments = Column(Unicode(50),
+                       nullable=True)
+    project_profile_id = Column(GUID,
+                                ForeignKey('project_profile.id'))
+    project_profile = relationship('ProjectProfile', back_populates='sensor')
+
+    def __init__(self, id=None, type=None,
+                 function=None, arguments=None):
+        self.id = id
+        self.type = type
+        self.function = function
+        self.arguments = arguments
+
+
+class ProjectProfile(Base):
+    __tablename__ = 'project_profile'
+    id = Column(GUID,
                 default=uuid.uuid4,
                 primary_key=True)
-    project_name = Column(GUID(),
-                          ForeignKey('project.id'))
-    data_json = Column(JSON,
-                       nullable=True)
-    user_id = Column(GUID(),
-                     ForeignKey('user.id'))
+    project_id = Column(GUID,
+                        ForeignKey('project.id'))
+    sensor = relationship('Sensor', back_populates='project_profile')
+    effector = relationship('Effector', back_populates='project_profile')
+    project = relationship('Project', back_populates='project_profile')
+
