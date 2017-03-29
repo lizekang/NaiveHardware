@@ -44,7 +44,7 @@ site_settings = {
 }
 
 database_settings = {
-    "default": "mysql+pymysql://root:472228231lzk@127.0.0.1/NaiveHardware?charset=utf8",
+    "default": "mysql+pymysql://root:472228231@182.254.241.40:3306/Naive?charset=utf8",
     "sqlite": "sqlite:///database.db",
 }
 

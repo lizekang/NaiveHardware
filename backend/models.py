@@ -83,10 +83,8 @@ class User(Base):
                       nullable=True)
     username = Column(Unicode(30),
                       nullable=False)
-    projects = relationship('Project',
-                            backref='user',
-                            lazy='dynamic',
-                            foreign_keys="[Project.user_id]")
+    project = relationship('Project',
+                           back_populates='user')
     nick_name = Column(Unicode(50),
                        nullable=False)
     is_admin = Column(Boolean,
@@ -100,7 +98,7 @@ class User(Base):
 
     def __init__(self, username=None,
                  number=None, nick_name=None):
-        self.name = username
+        self.username = username
         self.create_time = util.get_utc_time()
         self.nick_name = nick_name
         if number is None:
@@ -111,27 +109,9 @@ class User(Base):
     def format_detail(self):
         detail = {
             'id': self.id.hex,
-            'name': self.name,
+            'name': self.username,
             'nick_name': self.nick_name
         }
-
-        if self.avatar:
-            detail['avatar'] = self.avatar.format_detail()
-        if self.school:
-            detail.update(self.school.format_detail())
-        if self.styles:
-            for s in self.styles:
-                detail.update(s.format_detail())
-        if self.categories:
-            for c in self.categories:
-                detail.update(c.format_detail())
-        if self.cover_collection:
-            detail['collection'] = self.cover_collection.format_detail(get_photographer=False)
-        else:
-            hottest_collection = self.collections.order_by("likes desc").first()
-            detail['collection'] = hottest_collection.format_detail(get_photographer=False) \
-                if hottest_collection else None
-
         return detail
 
 
@@ -151,7 +131,7 @@ class Project(Base):
     user_id = Column(GUID(),
                      ForeignKey('user.id'))
     user = relationship('User',
-                        back_populates='projects')
+                        back_populates='project')
     likes = Column(BigInteger,
                    default=0)
     change_time = Column(DateTime(timezone=True),
@@ -199,7 +179,7 @@ class Sensor(Base):
                        nullable=True)
     project_profile_id = Column(GUID,
                                 ForeignKey('project_profile.id'))
-    project_profile = relationship('ProjectProfile', back_populates='effector')
+    project_profile = relationship('ProjectProfile', back_populates='sensor')
 
     def __init__(self, id=None, type=None,
                  function=None, arguments=None):
@@ -224,7 +204,7 @@ class Effector(Base):
                        nullable=True)
     project_profile_id = Column(GUID,
                                 ForeignKey('project_profile.id'))
-    project_profile = relationship('ProjectProfile', back_populates='sensor')
+    project_profile = relationship('ProjectProfile', back_populates='effector')
 
     def __init__(self, id=None, type=None,
                  function=None, arguments=None):

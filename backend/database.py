@@ -29,8 +29,9 @@ def init_models():
     import models
     session = db_session()
     try:
-        admin = models.User(username='su',
-                            number=0)
+        admin = models.User(username='472228231',
+                            number=0,
+                            nick_name='ZeK')
         admin.is_admin = True
         admin.number = 0
         admin.set_password("15927573538")
@@ -47,7 +48,8 @@ def init_test_models():
     import models
     session = db_session()
     user = models.User(username="test",
-                       number=1)
+                       number=1,
+                       nick_name='test')
     user.number = 1
     user.set_password("123456")
     session.add(user)
