@@ -27,15 +27,8 @@ from .. import baseForms
 from .. import baseValidators
 
 
-class ProjectForm(Form):
-    project_name = StringField('project_name')
-    description = TextAreaField('description')
-    authority = BooleanField('authority')
-    change_time = util.get_utc_time()
-
-
-class ProjectsForm(Form):
-    sortby = SelectField('sortby', default="likes", choices=[
-        ("create_time", "create_time"),
-        ("likes", "likes"),
-    ])
+class SensorForm(Form):
+    id = StringField('id')
+    type = SelectField('type')
+    function = SelectField('function')
+    arguments = StringField('arguments')
