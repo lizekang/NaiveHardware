@@ -28,12 +28,18 @@ class RegisterForm(Form):
         Email(),
         InputRequired(),
     ])
+    nick_name = StringField('nick_name', [
+        Length(max=20),
+        InputRequired(),
+    ])
+    password = StringField('password', [
+        InputRequired(),
+        Length(max=20),
+    ])
 
-    def validate_username(self, form, field):
+    def validate_username(form, field):
         _ = field.gettext
-        count = models.User.query() \
-            .filter(models.User.username == field.data) \
-            .count()
+        count = models.User.query.filter(models.User.username == field.data).count()
         if count != 0:
             raise ValidationError('This email has been used.')
 
@@ -48,7 +54,7 @@ class ProfileForm(Form):
         EqualTo('password'),
     ])
 
-    def validate_self_password(self, form, field):
+    def validate_self_password(form, field):
         current_user = form.kwargs.get('current_user', None)
         if current_user is None:
             return
@@ -74,10 +80,11 @@ class LoginForm(Form):
         Length(max=30),
     ])
     password = StringField('password', [
+        Length(max=30),
         InputRequired(),
     ])
 
-    def validate_email(self, form, field):
+    def validate_email(form, field):
         _ = field.gettext
         try:
             user = models.User.query \
@@ -88,7 +95,7 @@ class LoginForm(Form):
         except Exception:
             raise ValidationError(_('Email or password False.'))
 
-    # validate_password = validate_email
+    validate_password = validate_email
 
 
 

@@ -29,7 +29,7 @@ def init_models():
     import models
     session = db_session()
     try:
-        admin = models.User(username='472228231',
+        admin = models.User(username='472228231@qq.com',
                             number=0,
                             nick_name='ZeK')
         admin.is_admin = True

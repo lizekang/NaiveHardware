@@ -45,13 +45,12 @@ class RegisterHandler(base.APIBaseHandler):
 
     @base.db_success_or_pass
     def create_user(self, form):
-        admin = models.User.query \
-            .filter_by(number=0) \
-            .first()
         number = self.session.query(func.max(models.User.number)).first()[0] + 1
 
         user = models.User(username=form.username.data,
-                           number=number)
+                           number=number,
+                           nick_name=form.nick_name.data)
+        user.set_password(form.password.data)
         self.session.add(user)
 
         return user
