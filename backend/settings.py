@@ -12,7 +12,7 @@ LOCALE_DIR = os.path.join(BASE_DIR, 'locale/').replace('\\', '/')
 IMAGE_DIR = os.path.join(STATIC_DIR, 'img/').replace('\\', '/')
 
 ACCESS_HOST = "http://yuepai01-1251817761.file.myqcloud.com/"
-BUCKET_NAME = "NaiveHardware"
+BUCKET_NAME = "Naive"
 
 
 site_settings = {

@@ -1,4 +1,4 @@
-from .. import util
+import util
 from . import urls
 
 
@@ -7,4 +7,4 @@ __all__ = [
 ]
 
 
-mapping = util.generate_url(urls.urls, urls.app, __name__)
+mapping = util.generate_url(urls.urls, urls.apps, __name__)

@@ -5,7 +5,7 @@ from wtforms.validators import (
     ValidationError,
     StopValidation,
 )
-from ..import models
+import models
 
 
 def objects_get(query, msg):
