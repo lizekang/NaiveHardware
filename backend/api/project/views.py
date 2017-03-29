@@ -10,8 +10,8 @@ from tornado.httpclient import (
 )
 from sqlalchemy import func
 
-from ... import util
-from ... import models
+import util
+import models
 from .. import base
 from . import forms
 
@@ -19,7 +19,6 @@ from . import forms
 __all__ = [
     "ProjectHandler",
     "ProjectsHandler",
-    "ProjectLikesHandler",
     "ProjectsCountHandler",
     "UserProjectHandler",
     "UserProjectsHandler",
@@ -70,8 +69,7 @@ class UserProjectsHandler(base.APIBaseHandler):
     def create_project(self, form):
         project = models.Project(projectname=form.project_name.data,
                                  description=form.description.data,
-                                 authority=form.authority.data,
-                                 profile=form.profile.data)
+                                 authority=form.authority.data)
         project.user = self.current_user
         self.session.add(project)
         return project

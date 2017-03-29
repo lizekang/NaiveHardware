@@ -21,7 +21,7 @@ from wtforms.fields import (
 
 import models
 from form import Form
-from ... import util
+import util
 
 from .. import baseForms
 from .. import baseValidators
