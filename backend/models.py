@@ -83,7 +83,7 @@ class User(Base):
                       nullable=True)
     username = Column(Unicode(30),
                       nullable=False)
-    project = relationship('Project',
+    projects = relationship('Project',
                            back_populates='user')
     nick_name = Column(Unicode(50),
                        nullable=False)
@@ -137,6 +137,8 @@ class Project(Base):
     change_time = Column(DateTime(timezone=True),
                          nullable=False)
     project_profile = relationship('ProjectProfile', back_populates='project')
+    sensor = relationship('Sensor', back_populates='project_profile')
+    effector = relationship('Effector', back_populates='project_profile')
 
     def __init__(self, projectname=None, description=None,
                  authority=None, change_time=None):
@@ -173,20 +175,22 @@ class Sensor(Base):
                 nullable=False)
     type = Column(Unicode(50),
                   nullable=False)
-    function = Column(Unicode(100),
-                      nullable=False)
-    arguments = Column(Unicode(50),
-                       nullable=True)
-    project_profile_id = Column(GUID,
-                                ForeignKey('project_profile.id'))
-    project_profile = relationship('ProjectProfile', back_populates='sensor')
+    function = relationship('SensorAndEffectorFunction',
+                            back_populates='sensor')
+    project_id = Column(GUID,
+                        ForeignKey('project.id'))
+    project = relationship('Project', back_populates='sensor')
 
-    def __init__(self, id=None, type=None,
-                 function=None, arguments=None):
+    def __init__(self, id=None, type=None):
         self.id = id
         self.type = type
-        self.function = function
-        self.arguments = arguments
+
+    def format_detail(self):
+        detail = {
+            "id": self.id,
+            "type": self.type,
+        }
+        return detail
 
 
 class Effector(Base):
@@ -198,30 +202,52 @@ class Effector(Base):
                 nullable=False)
     type = Column(Unicode(50),
                   nullable=False)
-    function = Column(Unicode(100),
-                      nullable=False)
-    arguments = Column(Unicode(50),
-                       nullable=True)
-    project_profile_id = Column(GUID,
-                                ForeignKey('project_profile.id'))
-    project_profile = relationship('ProjectProfile', back_populates='effector')
+    function = relationship('SensorAndEffectorFunction',
+                            back_populates='effector')
+    project_id = Column(GUID,
+                        ForeignKey('project.id'))
+    project = relationship('Project',
+                           back_populates='effector')
 
-    def __init__(self, id=None, type=None,
-                 function=None, arguments=None):
+    def __init__(self, id=None, type=None):
         self.id = id
         self.type = type
-        self.function = function
-        self.arguments = arguments
+
+    def format_detail(self):
+        detail = {
+            "id": self.id,
+            "type": self.type
+        }
+        return detail
 
 
-class ProjectProfile(Base):
-    __tablename__ = 'project_profile'
+class SensorAndEffectorFunction(Base):
+    __tablename__ = 'function'
     id = Column(GUID,
                 default=uuid.uuid4,
                 primary_key=True)
-    project_id = Column(GUID,
-                        ForeignKey('project.id'))
-    sensor = relationship('Sensor', back_populates='project_profile')
-    effector = relationship('Effector', back_populates='project_profile')
-    project = relationship('Project', back_populates='project_profile')
+    function_name = Column(Unicode(50),
+                           nullable=True)
+    args = Column(Unicode(40),
+                  nullable=True)
+    sensor_id = Column(GUID,
+                       ForeignKey('sensor.id'),
+                       nullable=True)
+    effector_id = Column(GUID,
+                         ForeignKey('effector.id'),
+                         nullable=True)
+    sensor = relationship('Sensor',
+                          back_populates='sensor')
+    effector = relationship('Effector',
+                            back_populates='effector')
 
+    def __init__(self, function_name=None, args=None):
+        self.function_name = function_name
+        self.args = args
+
+    def format_detail(self):
+        detail = {
+            "function": self.function_name,
+            "args": self.args
+        }
+        return detail

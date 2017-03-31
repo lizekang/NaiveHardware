@@ -21,12 +21,11 @@ from wtforms.fields import (
 
 import models
 from form import Form
-from ... import util
-
+import util
 from .. import baseForms
 from .. import baseValidators
 
 
-class SensorForm(Form):
-    id = StringField('id')
-    type = SelectField('type')
+class FunctionForm(Form):
+    function_name = SelectField("function_name")
+    args = StringField("args")

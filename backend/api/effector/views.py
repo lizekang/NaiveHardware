@@ -14,3 +14,19 @@ from ... import util
 from ... import models
 from .. import base
 from . import forms
+
+__all__ = [
+    "EffectorAddHandler",
+    "EffectorDeleteHandler"
+]
+
+
+class EffectorAddHandler(base.APIBaseHandler):
+    """
+    URL: /effector/add
+    Allowed methods: POST
+    """
+    def post(self):
+        """
+        create a new effector
+        """
