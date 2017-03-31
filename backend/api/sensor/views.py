@@ -14,3 +14,15 @@ from ... import util
 from ... import models
 from .. import base
 from . import forms
+
+__all__ = [
+    "SensorAddHandler",
+    "SensorDeleteHandler",
+    "SensorHandler"
+]
+
+
+class SensorHandler(base.APIBaseHandler):
+    """
+    URL: /user/sensors
+    """

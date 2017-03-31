@@ -84,7 +84,7 @@ class User(Base):
     username = Column(Unicode(30),
                       nullable=False)
     projects = relationship('Project',
-                           back_populates='user')
+                            back_populates='user')
     nick_name = Column(Unicode(50),
                        nullable=False)
     is_admin = Column(Boolean,
@@ -131,37 +131,35 @@ class Project(Base):
     user_id = Column(GUID(),
                      ForeignKey('user.id'))
     user = relationship('User',
-                        back_populates='project')
+                        back_populates='projects')
     likes = Column(BigInteger,
                    default=0)
     change_time = Column(DateTime(timezone=True),
                          nullable=False)
-    project_profile = relationship('ProjectProfile', back_populates='project')
-    sensor = relationship('Sensor', back_populates='project_profile')
-    effector = relationship('Effector', back_populates='project_profile')
+    sensor = relationship('Sensor', back_populates='project')
+    effector = relationship('Effector', back_populates='project')
 
     def __init__(self, projectname=None, description=None,
                  authority=None, change_time=None):
         self.project_name = projectname
         self.description = description
-        self.create_time = util.get_utc_time()
+        self.create_time = util.get_utc_time().isoformat()
         self.authority = authority
         if not change_time:
-            self.change_time = util.get_utc_time()
+            self.change_time = util.get_utc_time().isoformat()
 
     def format_detail(self, get_user=True):
         detail = {
             'id': self.id.hex,
-            'project_name': self.projectname,
+            'project_name': self.project_name,
             'description': self.description,
             'create_time': self.create_time,
             'likes': self.likes,
-            'authority': self.authority
+            'authority': self.authority,
+            'change_time': self.change_time
         }
         if get_user:
             detail['user'] = self.user.format_detail()
-        if self.profile:
-            detail['profile'] = self.profile
 
         return detail
 
@@ -231,15 +229,15 @@ class SensorAndEffectorFunction(Base):
     args = Column(Unicode(40),
                   nullable=True)
     sensor_id = Column(GUID,
-                       ForeignKey('sensor.id'),
+                       ForeignKey('sensor.uid'),
                        nullable=True)
     effector_id = Column(GUID,
-                         ForeignKey('effector.id'),
+                         ForeignKey('effector.uid'),
                          nullable=True)
     sensor = relationship('Sensor',
-                          back_populates='sensor')
+                          back_populates='function')
     effector = relationship('Effector',
-                            back_populates='effector')
+                            back_populates='function')
 
     def __init__(self, function_name=None, args=None):
         self.function_name = function_name

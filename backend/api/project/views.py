@@ -47,13 +47,13 @@ class UserProjectsHandler(base.APIBaseHandler):
     URL: /user/projects
     Allowed methods: GET POST
     """
-    @base.authenticated
+    @base.authenticated()
     def get(self):
         query = self.current_user.projects
         self.finish_objects(forms.ProjectsForm,
                             query=query)
 
-    @base.authenticated
+    @base.authenticated()
     def post(self):
         form = forms.ProjectForm(self.json_args,
                                  locale_code=self.locale.code)
