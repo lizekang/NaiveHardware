@@ -1,5 +1,5 @@
 import random
-import datetime
+from datetime import date, datetime
 import hashlib
 import mimetypes
 import uuid
@@ -51,7 +51,17 @@ def check_password(request_pwd, final_pwd):
 
 
 def get_utc_time():
-    return datetime.datetime.now(tzlocal()).astimezone(tzutc())
+    return datetime.now(tzlocal()).astimezone(tzutc())
+
+
+class AdvEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return super().default(self, obj)
 
 
 def generate_url(urls, apps=None, name=None):

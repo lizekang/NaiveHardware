@@ -35,7 +35,12 @@ class ProjectForm(Form):
 
 
 class ProjectsForm(Form):
-    sortby = SelectField('sortby', default="likes", choices=[
+    sortby = SelectField('sortby', default="create_time", choices=[
         ("create_time", "create_time"),
         ("likes", "likes"),
     ])
+    order = SelectField('order', default="asc", choices=[
+        ("asc", "asc"),
+        ("desc", "desc"),
+    ])
+

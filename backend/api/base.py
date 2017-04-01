@@ -15,7 +15,7 @@ from tornado.web import (
 
 import models
 from database import db_session
-from util import conn_redis
+from util import conn_redis, AdvEncoder
 
 
 redis_cli = conn_redis()
@@ -175,7 +175,8 @@ class QueryHandlerMixin():
             raise JSONHTTPError(404)
 
         self.finish(json.dumps(
-            obj.format_detail(*format_args, **format_kwargs)
+            obj.format_detail(*format_args, **format_kwargs),
+            cls=AdvEncoder
         ))
         return obj
 

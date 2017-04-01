@@ -60,7 +60,8 @@ class UserProjectsHandler(base.APIBaseHandler):
         if form.validate():
             project = self.create_project(form)
             self.finish(json.dumps(
-                project.format_detail()
+                project.format_detail(),
+                cls=util.AdvEncoder
             ))
         else:
             self.validation_error(form)
@@ -95,7 +96,8 @@ class UserProjectHandler(base.APIBaseHandler):
         if form.validate():
             project = self.edit_project(project, form)
             self.finish(json.dumps(
-                project.format_detail()
+                project.format_detail(),
+                cls=util.AdvEncoder
             ))
         else:
             self.validation_error(form)

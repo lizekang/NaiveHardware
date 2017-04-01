@@ -38,7 +38,7 @@ class RegisterHandler(base.APIBaseHandler):
 
             self.set_status(201)
             self.finish(json.dumps({
-                'auth': self.create_signed_value('uid', user.id.hex).decode('utf-8'),
+                'auth': self.create_signed_value('uid', user.uid.hex).decode('utf-8'),
             }))
         else:
             self.validation_error(form)
@@ -71,7 +71,7 @@ class LoginHandler(base.APIBaseHandler):
             user = form.kwargs['user']
 
             self.finish(json.dumps({
-                'auth': self.create_signed_value('uid', user.id.hex).decode('utf-8'),
+                'auth': self.create_signed_value('uid', user.uid.hex).decode('utf-8'),
             }))
         else:
             self.validation_error(form)

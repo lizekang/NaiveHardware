@@ -72,9 +72,9 @@ class GUID(TypeDecorator):
 
 class User(Base):
     __tablename__ = 'user'
-    id = Column(GUID(),
-                default=uuid.uuid4,
-                primary_key=True)
+    uid = Column(GUID(),
+                 default=uuid.uuid4,
+                 primary_key=True)
     number = Column(Integer,
                     autoincrement=True,
                     nullable=False,
@@ -108,7 +108,7 @@ class User(Base):
 
     def format_detail(self):
         detail = {
-            'id': self.id.hex,
+            'uid': self.uid.hex,
             'name': self.username,
             'nick_name': self.nick_name
         }
@@ -117,9 +117,9 @@ class User(Base):
 
 class Project(Base):
     __tablename__ = 'project'
-    id = Column(GUID(),
-                default=uuid.uuid4,
-                primary_key=True)
+    uid = Column(GUID(),
+                 default=uuid.uuid4,
+                 primary_key=True)
     project_name = Column(Unicode(30),
                           nullable=False)
     description = Column(UnicodeText,
@@ -129,7 +129,7 @@ class Project(Base):
     authority = Column(Boolean,
                        nullable=False)
     user_id = Column(GUID(),
-                     ForeignKey('user.id'))
+                     ForeignKey('user.uid'))
     user = relationship('User',
                         back_populates='projects')
     likes = Column(BigInteger,
@@ -150,7 +150,7 @@ class Project(Base):
 
     def format_detail(self, get_user=True):
         detail = {
-            'id': self.id.hex,
+            'uid': self.uid.hex,
             'project_name': self.project_name,
             'description': self.description,
             'create_time': self.create_time,
@@ -176,7 +176,7 @@ class Sensor(Base):
     function = relationship('SensorAndEffectorFunction',
                             back_populates='sensor')
     project_id = Column(GUID,
-                        ForeignKey('project.id'))
+                        ForeignKey('project.uid'))
     project = relationship('Project', back_populates='sensor')
 
     def __init__(self, id=None, type=None):
@@ -185,6 +185,7 @@ class Sensor(Base):
 
     def format_detail(self):
         detail = {
+            "uid": self.uid.hex,
             "id": self.id,
             "type": self.type,
         }
@@ -203,7 +204,7 @@ class Effector(Base):
     function = relationship('SensorAndEffectorFunction',
                             back_populates='effector')
     project_id = Column(GUID,
-                        ForeignKey('project.id'))
+                        ForeignKey('project.uid'))
     project = relationship('Project',
                            back_populates='effector')
 
@@ -213,6 +214,7 @@ class Effector(Base):
 
     def format_detail(self):
         detail = {
+            "uid": self.uid,
             "id": self.id,
             "type": self.type
         }
@@ -221,7 +223,7 @@ class Effector(Base):
 
 class SensorAndEffectorFunction(Base):
     __tablename__ = 'function'
-    id = Column(GUID,
+    uid = Column(GUID,
                 default=uuid.uuid4,
                 primary_key=True)
     function_name = Column(Unicode(50),
@@ -245,6 +247,7 @@ class SensorAndEffectorFunction(Base):
 
     def format_detail(self):
         detail = {
+            "uid": self.uid.hex,
             "function": self.function_name,
             "args": self.args
         }
