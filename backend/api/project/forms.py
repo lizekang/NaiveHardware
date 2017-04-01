@@ -34,7 +34,7 @@ class ProjectForm(Form):
     change_time = util.get_utc_time()
 
 
-class ProjectsForm(Form):
+class ProjectsForm(Form, baseForms.SliceMixin):
     sortby = SelectField('sortby', default="create_time", choices=[
         ("create_time", "create_time"),
         ("likes", "likes"),

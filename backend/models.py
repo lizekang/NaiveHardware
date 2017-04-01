@@ -84,7 +84,9 @@ class User(Base):
     username = Column(Unicode(30),
                       nullable=False)
     projects = relationship('Project',
-                            back_populates='user')
+                            back_populates='user',
+                            uselist=True,
+                            lazy='dynamic')
     nick_name = Column(Unicode(50),
                        nullable=False)
     is_admin = Column(Boolean,
@@ -136,8 +138,14 @@ class Project(Base):
                    default=0)
     change_time = Column(DateTime(timezone=True),
                          nullable=False)
-    sensor = relationship('Sensor', back_populates='project')
-    effector = relationship('Effector', back_populates='project')
+    sensor = relationship('Sensor',
+                          back_populates='project',
+                          uselist=True,
+                          lazy='dynamic')
+    effector = relationship('Effector',
+                            back_populates='project',
+                            uselist=True,
+                            lazy='dynamic')
 
     def __init__(self, projectname=None, description=None,
                  authority=None, change_time=None):
@@ -174,7 +182,9 @@ class Sensor(Base):
     type = Column(Unicode(50),
                   nullable=False)
     function = relationship('SensorAndEffectorFunction',
-                            back_populates='sensor')
+                            back_populates='sensor',
+                            uselist=True,
+                            lazy='dynamic')
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
     project = relationship('Project', back_populates='sensor')
@@ -202,7 +212,9 @@ class Effector(Base):
     type = Column(Unicode(50),
                   nullable=False)
     function = relationship('SensorAndEffectorFunction',
-                            back_populates='effector')
+                            back_populates='effector',
+                            uselist=True,
+                            lazy='dynamic')
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
     project = relationship('Project',

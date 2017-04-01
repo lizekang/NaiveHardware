@@ -153,7 +153,7 @@ class QueryHandlerMixin():
                 response.append(
                     obj.format_detail(*args, **kwargs)
                 )
-            self.finish(json.dumps(response))
+            self.finish(json.dumps(response, cls=AdvEncoder))
         else:
             self.validation_error(form)
 
@@ -163,7 +163,7 @@ class QueryHandlerMixin():
         response = {
             'count': query.count()
         }
-        self.finish(json.dumps(response))
+        self.finish(json.dumps(response, cls=AdvEncoder))
 
     def finish_object(self, Model, id=None, permission_check=None,
                       query_kwargs={},

@@ -81,16 +81,16 @@ class UserProjectHandler(base.APIBaseHandler):
     URL: /user/project/(?P<uuid>[0-9a-fA-F]{32})
     Allowed methods: GET PATCH DELETE
     """
-    @base.authenticated
+    @base.authenticated()
     def get(self, uuid):
         self.finish_object(models.Project,
                            uuid,
                            permission_check=self.project_user_check)
 
-    @base.authenticated
+    @base.authenticated()
     def patch(self, uuid):
         project = self.get_or_404(self.current_user.projects,
-                                  id=uuid)
+                                  uid=uuid)
         form = forms.ProjectForm(self.json_args,
                                  locale_code=self.locale.code)
         if form.validate():
@@ -102,7 +102,7 @@ class UserProjectHandler(base.APIBaseHandler):
         else:
             self.validation_error(form)
 
-    @base.authenticated
+    @base.authenticated()
     def delete(self, uuid):
         project = self.get_or_404(self.current_user.projects,
                                   uuid)
@@ -112,7 +112,7 @@ class UserProjectHandler(base.APIBaseHandler):
 
     @base.db_success_or_500
     def edit_project(self, project, form):
-        attr_list = ['project_name', 'description', 'authority', 'profile']
+        attr_list = ['project_name', 'description', 'authority', 'change_time']
         self.apply_edit(project, form, attr_list)
 
         return project

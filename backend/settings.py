@@ -21,7 +21,7 @@ site_settings = {
     "xsrf_cookies": False,
     "login_url": "/login",
     "autoescape": None,
-    "port": 8000,
+    "port": 8001,
     "base_path": BASE_DIR,
     "template_path": TEMPLATE_DIR,
     "static_path": STATIC_DIR,
