@@ -105,18 +105,19 @@ class UserProjectHandler(base.APIBaseHandler):
     @base.authenticated()
     def delete(self, uuid):
         project = self.get_or_404(self.current_user.projects,
-                                  uuid)
+                                  uid=uuid)
         self.delete_project(project)
         self.set_status(204)
         self.finish()
 
     @base.db_success_or_500
     def edit_project(self, project, form):
-        attr_list = ['project_name', 'description', 'authority', 'change_time']
+        attr_list = ['project_name', 'description', 'authority']
         self.apply_edit(project, form, attr_list)
 
         return project
 
+    @base.db_success_or_500
     def delete_project(self, project):
         self.session.delete(project)
 
@@ -132,9 +133,10 @@ class ProjectsCountHandler(base.APIBaseHandler):
     URL: /user/(?P<uuid>[0-9a-fA-F]{32})/project/count
     Allowed methods: GET
     """
+    # TODO: here is a bug
     def get(self, uuid):
-        user = self.get_or_404(models.User,
-                               uuid)
+        user = self.get_or_404(models.User.query,
+                               uid=uuid)
         self.finish_objects_count(query=user.projects)
 
 
