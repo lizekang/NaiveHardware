@@ -10,23 +10,122 @@ from tornado.httpclient import (
 )
 from sqlalchemy import func
 
-from ... import util
-from ... import models
+import util
+import models
 from .. import base
 from . import forms
 
 __all__ = [
-    "EffectorAddHandler",
-    "EffectorDeleteHandler"
+    "UserEffectorHandler",
+    "ProjectEffectorHandler",
+    "EffectorHandler"
 ]
 
 
-class EffectorAddHandler(base.APIBaseHandler):
+class UserEffectorHandler(base.APIBaseHandler):
     """
-    URL: /effector/add
-    Allowed methods: POST
+    URL: /user/effectors
+    Allowed methods: GET POST
     """
-    def post(self):
+    @base.authenticated()
+    def get(self):
         """
-        create a new effector
+        get effectors under a user, using when send data to ruff
         """
+        query = self.current_user.effectors
+        self.finish_objects(forms.EffectorsForm,
+                            query=query)
+
+
+class ProjectEffectorHandler(base.APIBaseHandler):
+    """
+    URL: /user/project/(?P<uuid>[0-9a-fA-F]{32})/effectors
+    Allowed methods: GET POST
+    """
+    @base.authenticated()
+    def get(self, uuid):
+        """
+        get effectors under a project
+        """
+        project = self.get_or_404(self.current_user.projects,
+                                  uid=uuid)
+        query = project.effectors
+        self.finish_objects(forms.EffectorsForm,
+                            query=query)
+
+    @base.authenticated()
+    def post(self, uuid):
+        form = forms.EffectorForm(self.json_args,
+                                  locale_code=self.locale.code)
+        if form.validate():
+            effector = self.create_effector(form)
+            self.finish(json.dumps(
+                effector.format_detail(),
+                cls=util.AdvEncoder
+            ))
+        else:
+            self.validation_error(form)
+
+    @base.db_success_or_pass
+    def create_effector(self, form, uuid):
+        effector = models.Effector(id=form.id.data,
+                                   type=form.type.data)
+        effector.user = self.current_user
+        effector.project = self.get_or_404(self.current_user.projects,
+                                           uid=uuid)
+        self.session.add(effector)
+        return effector
+
+
+class EffectorHandler(base.APIBaseHandler):
+    """
+    URL: /user/project/(?P<project_uuid>[0-9a-fA-F]{32})/effector/(?P<effector_uuid>[0-9a-fA-F]{32})
+    Allowed methods: GET PATCH DELETE
+    """
+    @base.authenticated()
+    def get(self, project_uuid, effector_uuid):
+        project = self.get_or_404(self.current_user.projects,
+                                  uid=project_uuid)
+        effector = self.get_or_404(project.effectors,
+                                 uid=effector_uuid)
+        self.finish(json.dumps(
+            effector.format_detail(),
+            cls=util.AdvEncoder
+        ))
+
+    @base.authenticated()
+    def patch(self, project_uuid, effector_uuid):
+        project = self.get_or_404(self.current_user.projects,
+                                  uid=project_uuid)
+        effector = self.get_or_404(project.effectors,
+                                 uid=effector_uuid)
+        form = forms.EffectorForm(self.json_args,
+                                locale_code=self.locale.code)
+        if form.validate():
+            effector = self.edit_effector(effector, form)
+            self.finish(json.dumps(
+                effector.format_detail(),
+                cls=util.AdvEncoder
+            ))
+        else:
+            self.validation_error(form)
+
+    @base.authenticated()
+    def delete(self, project_uuid, effector_uuid):
+        project = self.get_or_404(self.current_user.projects,
+                                  uid=project_uuid)
+        effector = self.get_or_404(project.effectors,
+                                 uid=effector_uuid)
+        self.delete_effector(effector)
+        self.set_status(204)
+        self.finish()
+
+    @base.db_success_or_500
+    def edit_effector(self, effector, form):
+        attr_list = ['id', 'type']
+        self.apply_edit(effector, form, attr_list)
+        return effector
+
+    @base.db_success_or_500
+    def delete_effector(self, effector):
+        self.session.delete(effector)

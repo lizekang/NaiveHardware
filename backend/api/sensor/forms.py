@@ -30,3 +30,9 @@ from .. import baseValidators
 class SensorForm(Form):
     id = StringField('id')
     type = SelectField('type')
+
+
+class SensorsForm(Form, baseForms.SliceMixin):
+    sortby = SelectField('sortby', default='id')
+    order = SelectField('order', default='asc')
+

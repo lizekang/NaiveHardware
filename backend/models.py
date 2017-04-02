@@ -91,6 +91,14 @@ class User(Base):
                        nullable=False)
     is_admin = Column(Boolean,
                       default=False)
+    sensors = relationship('Sensor',
+                           back_populates='user',
+                           uselist=True,
+                           lazy='dynamic')
+    effectors = relationship('Effector',
+                             back_populates='user',
+                             uselist=True,
+                             lazy='dynamic')
 
     def check_password(self, request_pwd):
         return util.check_password(request_pwd, self.password)
@@ -138,14 +146,14 @@ class Project(Base):
                    default=0)
     change_time = Column(DateTime(timezone=True),
                          nullable=False)
-    sensor = relationship('Sensor',
-                          back_populates='project',
-                          uselist=True,
-                          lazy='dynamic')
-    effector = relationship('Effector',
-                            back_populates='project',
-                            uselist=True,
-                            lazy='dynamic')
+    sensors = relationship('Sensor',
+                           back_populates='project',
+                           uselist=True,
+                           lazy='dynamic')
+    effectors = relationship('Effector',
+                             back_populates='project',
+                             uselist=True,
+                             lazy='dynamic')
 
     def __init__(self, projectname=None, description=None,
                  authority=None, change_time=None):
@@ -188,6 +196,9 @@ class Sensor(Base):
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
     project = relationship('Project', back_populates='sensor')
+    user_id = Column(GUID,
+                     ForeignKey('user.uid'))
+    user = relationship('User', back_populates='sensor')
 
     def __init__(self, id=None, type=None):
         self.id = id
@@ -199,6 +210,8 @@ class Sensor(Base):
             "id": self.id,
             "type": self.type,
         }
+        if self.function:
+            detail['function'] = self.function
         return detail
 
 
@@ -219,6 +232,10 @@ class Effector(Base):
                         ForeignKey('project.uid'))
     project = relationship('Project',
                            back_populates='effector')
+    user_id = Column(GUID,
+                     ForeignKey('user.uid'))
+    user = relationship('User',
+                        back_populates='sensor')
 
     def __init__(self, id=None, type=None):
         self.id = id

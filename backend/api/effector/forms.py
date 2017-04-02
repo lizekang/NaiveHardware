@@ -30,5 +30,8 @@ from .. import baseValidators
 class EffectorForm(Form):
     id = StringField('id')
     type = SelectField('type')
-    function = SelectField('function')
-    arguments = StringField('arguments')
+
+
+class EffectorsForm(Form, baseForms.SliceMixin):
+    sortby = SelectField('sortby', default='id')
+    order = SelectField('order', default='asc')
