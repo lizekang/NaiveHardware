@@ -87,7 +87,7 @@ class EffectorHandler(base.APIBaseHandler):
         project = self.get_or_404(self.current_user.projects,
                                   uid=project_uuid)
         effector = self.get_or_404(project.effectors,
-                                 uid=effector_uuid)
+                                   uid=effector_uuid)
         self.finish(json.dumps(
             effector.format_detail(),
             cls=util.AdvEncoder
@@ -98,9 +98,9 @@ class EffectorHandler(base.APIBaseHandler):
         project = self.get_or_404(self.current_user.projects,
                                   uid=project_uuid)
         effector = self.get_or_404(project.effectors,
-                                 uid=effector_uuid)
+                                   uid=effector_uuid)
         form = forms.EffectorForm(self.json_args,
-                                locale_code=self.locale.code)
+                                  locale_code=self.locale.code)
         if form.validate():
             effector = self.edit_effector(effector, form)
             self.finish(json.dumps(
@@ -115,7 +115,7 @@ class EffectorHandler(base.APIBaseHandler):
         project = self.get_or_404(self.current_user.projects,
                                   uid=project_uuid)
         effector = self.get_or_404(project.effectors,
-                                 uid=effector_uuid)
+                                   uid=effector_uuid)
         self.delete_effector(effector)
         self.set_status(204)
         self.finish()
