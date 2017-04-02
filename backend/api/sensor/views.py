@@ -25,7 +25,7 @@ __all__ = [
 class UserSensorHandler(base.APIBaseHandler):
     """
     URL: /user/sensors
-    Allowed methods: GET POST
+    Allowed methods: GET
     """
     @base.authenticated()
     def get(self):

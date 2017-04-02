@@ -17,15 +17,22 @@ from . import forms
 
 __all__ = [
     "FunctionSensorHandler",
-    "FunctionEffectorHandler"
+    "FunctionEffectorHandler",
+    "FunctionHandler"
 ]
 
 
 class FunctionSensorHandler(base.APIBaseHandler):
     """
     URL: /user/project/(?P<project_uuid>[0-9a-fA-F]{32})/sensor/(?P<sensor_uuid>[0-9a-fA-F]{32})/function
-    Allowed methods: POST
+    Allowed methods: POST GET
     """
+    @base.authenticated()
+    def get(self, project_uuid):
+        project = self.get_or_404(self.current_user.projects,
+                                  uid=project_uuid)
+        # TODO: many todos
+
     @base.authenticated()
     def post(self, project_uuid, sensor_uuid):
         # TODO: how to create more functions one time
@@ -35,6 +42,12 @@ class FunctionSensorHandler(base.APIBaseHandler):
             function = self.create_function(form,
                                             project_uuid,
                                             sensor_uuid)
+            self.finish(json.dumps(
+                function.format_detail(),
+                cls=util.AdvEncoder
+            ))
+        else:
+            self.validation_error(form)
 
     @base.db_success_or_pass
     def create_function(self, form, project_uuid, sensor_uuid):
@@ -54,3 +67,4 @@ class FunctionEffectorHandler(base.APIBaseHandler):
     URL: /user/effector/(?P<uuid>[0-9a-fA-f]{32})/function
     Allowed method: POST
     """
+

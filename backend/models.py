@@ -189,10 +189,10 @@ class Sensor(Base):
                 nullable=False)
     type = Column(Unicode(50),
                   nullable=False)
-    function = relationship('SensorAndEffectorFunction',
-                            back_populates='sensor',
-                            uselist=True,
-                            lazy='dynamic')
+    functions = relationship('SensorAndEffectorFunction',
+                             back_populates='sensor',
+                             uselist=True,
+                             lazy='dynamic')
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
     project = relationship('Project', back_populates='sensor')
@@ -210,8 +210,8 @@ class Sensor(Base):
             "id": self.id,
             "type": self.type,
         }
-        if self.function:
-            detail['function'] = self.function
+        if self.functions:
+            detail['functions'] = self.functions
         return detail
 
 
@@ -224,10 +224,10 @@ class Effector(Base):
                 nullable=False)
     type = Column(Unicode(50),
                   nullable=False)
-    function = relationship('SensorAndEffectorFunction',
-                            back_populates='effector',
-                            uselist=True,
-                            lazy='dynamic')
+    functions = relationship('SensorAndEffectorFunction',
+                             back_populates='effector',
+                             uselist=True,
+                             lazy='dynamic')
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
     project = relationship('Project',
@@ -247,14 +247,16 @@ class Effector(Base):
             "id": self.id,
             "type": self.type
         }
+        if self.functions:
+            detail['functions'] = self.functions
         return detail
 
 
 class SensorAndEffectorFunction(Base):
     __tablename__ = 'function'
     uid = Column(GUID,
-                default=uuid.uuid4,
-                primary_key=True)
+                 default=uuid.uuid4,
+                 primary_key=True)
     function_name = Column(Unicode(50),
                            nullable=True)
     args = Column(Unicode(40),
@@ -266,9 +268,9 @@ class SensorAndEffectorFunction(Base):
                          ForeignKey('effector.uid'),
                          nullable=True)
     sensor = relationship('Sensor',
-                          back_populates='function')
+                          back_populates='functions')
     effector = relationship('Effector',
-                            back_populates='function')
+                            back_populates='functions')
 
     def __init__(self, function_name=None, args=None):
         self.function_name = function_name
