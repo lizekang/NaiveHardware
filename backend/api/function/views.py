@@ -17,8 +17,7 @@ from . import forms
 
 __all__ = [
     "FunctionSensorHandler",
-    "FunctionEffectorHandler",
-    "FunctionHandler"
+    "FunctionEffectorHandler"
 ]
 
 

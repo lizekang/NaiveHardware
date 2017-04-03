@@ -195,10 +195,10 @@ class Sensor(Base):
                              lazy='dynamic')
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
-    project = relationship('Project', back_populates='sensor')
+    project = relationship('Project', back_populates='sensors')
     user_id = Column(GUID,
                      ForeignKey('user.uid'))
-    user = relationship('User', back_populates='sensor')
+    user = relationship('User', back_populates='sensors')
 
     def __init__(self, id=None, type=None):
         self.id = id
@@ -210,8 +210,8 @@ class Sensor(Base):
             "id": self.id,
             "type": self.type,
         }
-        if self.functions:
-            detail['functions'] = self.functions
+        #if self.functions:
+        #    detail['functions'] = self.functions
         return detail
 
 
@@ -231,11 +231,11 @@ class Effector(Base):
     project_id = Column(GUID,
                         ForeignKey('project.uid'))
     project = relationship('Project',
-                           back_populates='effector')
+                           back_populates='effectors')
     user_id = Column(GUID,
                      ForeignKey('user.uid'))
     user = relationship('User',
-                        back_populates='sensor')
+                        back_populates='effectors')
 
     def __init__(self, id=None, type=None):
         self.id = id

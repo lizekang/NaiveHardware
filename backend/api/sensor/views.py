@@ -58,7 +58,7 @@ class ProjectSensorHandler(base.APIBaseHandler):
         form = forms.SensorForm(self.json_args,
                                 locale_code=self.locale.code)
         if form.validate():
-            sensor = self.create_sensor(form)
+            sensor = self.create_sensor(form, uuid)
             self.finish(json.dumps(
                 sensor.format_detail(),
                 cls=util.AdvEncoder

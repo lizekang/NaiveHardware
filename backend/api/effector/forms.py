@@ -21,7 +21,7 @@ from wtforms.fields import (
 
 import models
 from form import Form
-from ... import util
+import util
 
 from .. import baseForms
 from .. import baseValidators
@@ -29,9 +29,15 @@ from .. import baseValidators
 
 class EffectorForm(Form):
     id = StringField('id')
-    type = SelectField('type')
+    type = StringField('type')
 
 
 class EffectorsForm(Form, baseForms.SliceMixin):
-    sortby = SelectField('sortby', default='id')
-    order = SelectField('order', default='asc')
+    sortby = SelectField('sortby', default='id', choices=[
+        ("id", "id")
+    ])
+    order = SelectField('order', default='asc', choices=[
+        ("asc", "asc"),
+        ("desc", "desc")
+    ])
+
