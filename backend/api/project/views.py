@@ -59,15 +59,25 @@ class UserProjectsHandler(base.APIBaseHandler):
                                  locale_code=self.locale.code)
         if form.validate():
             project = self.create_project(form)
-            self.finish(json.dumps(
-                project.format_detail(),
-                cls=util.AdvEncoder
-            ))
+            if project:
+                self.finish(json.dumps(
+                    project.format_detail(),
+                    cls=util.AdvEncoder
+                ))
+            else:
+                name = "project_name"
+                self.check_for_same(name)
         else:
             self.validation_error(form)
 
     @base.db_success_or_pass
     def create_project(self, form):
+        count = 0
+        for project in self.current_user.projects:
+            if project.project_name == form.project_name.data:
+                count += 1
+        if count != 0:
+            return False
         project = models.Project(projectname=form.project_name.data,
                                  description=form.description.data,
                                  authority=form.authority.data)
@@ -95,10 +105,14 @@ class UserProjectHandler(base.APIBaseHandler):
                                  locale_code=self.locale.code)
         if form.validate():
             project = self.edit_project(project, form)
-            self.finish(json.dumps(
-                project.format_detail(),
-                cls=util.AdvEncoder
-            ))
+            if project:
+                self.finish(json.dumps(
+                    project.format_detail(),
+                    cls=util.AdvEncoder
+                ))
+            else:
+                name = "project_name"
+                self.check_for_same(name)
         else:
             self.validation_error(form)
 
@@ -112,6 +126,12 @@ class UserProjectHandler(base.APIBaseHandler):
 
     @base.db_success_or_500
     def edit_project(self, project, form):
+        count = 0
+        for project in self.current_user.projects:
+            if project.project_name == form.project_name.data:
+                count += 1
+        if count != 0:
+            return False
         attr_list = ['project_name', 'description', 'authority']
         self.apply_edit(project, form, attr_list)
 

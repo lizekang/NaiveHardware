@@ -59,15 +59,25 @@ class ProjectEffectorHandler(base.APIBaseHandler):
                                   locale_code=self.locale.code)
         if form.validate():
             effector = self.create_effector(form)
-            self.finish(json.dumps(
-                effector.format_detail(),
-                cls=util.AdvEncoder
-            ))
+            if effector:
+                self.finish(json.dumps(
+                    effector.format_detail(),
+                    cls=util.AdvEncoder
+                ))
+            else:
+                name = "id"
+                self.check_for_same(name)
         else:
             self.validation_error(form)
 
     @base.db_success_or_pass
     def create_effector(self, form, uuid):
+        count = 0
+        for effector in self.current_user.effectors:
+            if effector.id == form.id.data:
+                count += 1
+        if count != 0:
+            return False
         effector = models.Effector(id=form.id.data,
                                    type=form.type.data)
         effector.user = self.current_user
@@ -103,10 +113,14 @@ class EffectorHandler(base.APIBaseHandler):
                                   locale_code=self.locale.code)
         if form.validate():
             effector = self.edit_effector(effector, form)
-            self.finish(json.dumps(
-                effector.format_detail(),
-                cls=util.AdvEncoder
-            ))
+            if effector:
+                self.finish(json.dumps(
+                    effector.format_detail(),
+                    cls=util.AdvEncoder
+                ))
+            else:
+                name = "id"
+                self.check_for_same(name)
         else:
             self.validation_error(form)
 
@@ -122,6 +136,12 @@ class EffectorHandler(base.APIBaseHandler):
 
     @base.db_success_or_500
     def edit_effector(self, effector, form):
+        count = 0
+        for effector in self.current_user.effectors:
+            if effector.id == form.id.data:
+                count += 1
+        if count != 0:
+            return False
         attr_list = ['id', 'type']
         self.apply_edit(effector, form, attr_list)
         return effector

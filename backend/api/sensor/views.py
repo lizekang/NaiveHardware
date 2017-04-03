@@ -59,15 +59,25 @@ class ProjectSensorHandler(base.APIBaseHandler):
                                 locale_code=self.locale.code)
         if form.validate():
             sensor = self.create_sensor(form, uuid)
-            self.finish(json.dumps(
-                sensor.format_detail(),
-                cls=util.AdvEncoder
-            ))
+            if sensor:
+                self.finish(json.dumps(
+                    sensor.format_detail(),
+                    cls=util.AdvEncoder
+                ))
+            else:
+                name = "id"
+                self.check_for_same(name)
         else:
             self.validation_error(form)
 
     @base.db_success_or_pass
     def create_sensor(self, form, uuid):
+        count = 0
+        for sensor in self.current_user.sensors:
+            if sensor.id == form.id.data:
+                count += 1
+        if count != 0:
+            return False
         sensor = models.Sensor(id=form.id.data,
                                type=form.type.data)
         sensor.user = self.current_user
@@ -103,10 +113,14 @@ class SensorHandler(base.APIBaseHandler):
                                 locale_code=self.locale.code)
         if form.validate():
             sensor = self.edit_sensor(sensor, form)
-            self.finish(json.dumps(
-                sensor.format_detail(),
-                cls=util.AdvEncoder
-            ))
+            if sensor:
+                self.finish(json.dumps(
+                    sensor.format_detail(),
+                    cls=util.AdvEncoder
+                ))
+            else:
+                name = "id"
+                self.check_for_same(name)
         else:
             self.validation_error(form)
 
@@ -122,6 +136,12 @@ class SensorHandler(base.APIBaseHandler):
 
     @base.db_success_or_500
     def edit_sensor(self, sensor, form):
+        count = 0
+        for sensor in self.current_user.sensors:
+            if sensor.id == form.id.data:
+                count += 1
+        if count != 0:
+            return False
         attr_list = ['id', 'type']
         self.apply_edit(sensor, form, attr_list)
         return sensor

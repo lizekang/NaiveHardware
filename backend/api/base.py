@@ -92,6 +92,14 @@ class FormHandlerMixin():
             })
         raise JSONHTTPError(400, response=response)
 
+    def check_for_same(self, name):
+        response = list()
+        response.append({
+            'name': name,
+            'error': "this " + name + " has been used",
+        })
+        raise JSONHTTPError(400, response=response)
+
 
 class QueryHandlerMixin():
     def apply_limit(self, query, form):
