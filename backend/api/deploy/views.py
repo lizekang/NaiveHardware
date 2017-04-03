@@ -9,8 +9,7 @@ from urllib.error import HTTPError
 import tornado.httpclient
 from tornado import gen
 from tornado.httpclient import (
-    AsyncHTTPClient,
-    HTTPError,
+    AsyncHTTPClient
 )
 from sqlalchemy import func
 
