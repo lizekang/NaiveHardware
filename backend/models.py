@@ -138,6 +138,8 @@ class Project(Base):
                          nullable=False)
     authority = Column(Boolean,
                        nullable=False)
+    is_run = Column(Boolean,
+                    nullable=False)
     user_id = Column(GUID(),
                      ForeignKey('user.uid'))
     user = relationship('User',
@@ -161,6 +163,7 @@ class Project(Base):
         self.description = description
         self.create_time = util.get_utc_time().isoformat()
         self.authority = authority
+        self.is_run = False
         if not change_time:
             self.change_time = util.get_utc_time().isoformat()
 

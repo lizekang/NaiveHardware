@@ -16,9 +16,7 @@ from . import forms
 
 __all__ = [
     "LoginHandler",
-    "RegisterHandler",
-    "ProfileHandler",
-    "ActivateHandler",
+    "RegisterHandler"
 ]
 
 
@@ -76,17 +74,3 @@ class LoginHandler(base.APIBaseHandler):
         else:
             self.validation_error(form)
 
-
-class ProfileHandler(base.APIBaseHandler):
-    """
-    URL: /user
-    Allowed methods: 'GET', 'PATCH'
-    """
-    # TODO: check and edit user's profile
-
-
-class ActivateHandler(base.APIBaseHandler):
-    """
-    A class I don't understand
-    """
-    # TODO: many todo
