@@ -27,5 +27,5 @@ from .. import baseValidators
 
 
 class FunctionForm(Form):
-    function_name = SelectField("function_name")
+    function_name = StringField("function_name")
     args = StringField("args")

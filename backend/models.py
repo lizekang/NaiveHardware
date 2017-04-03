@@ -247,7 +247,7 @@ class Effector(Base):
             "id": self.id,
             "type": self.type
         }
-        if self.functions:
+        if self.functions is not None:
             detail['functions'] = self.functions
         return detail
 
@@ -279,7 +279,7 @@ class SensorAndEffectorFunction(Base):
     def format_detail(self):
         detail = {
             "uid": self.uid.hex,
-            "function": self.function_name,
+            "function_name": self.function_name,
             "args": self.args
         }
         return detail
