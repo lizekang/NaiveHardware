@@ -174,12 +174,24 @@ class Project(Base):
             'description': self.description,
             'create_time': self.create_time,
             'likes': self.likes,
+            'is_run': self.is_run,
             'authority': self.authority,
-            'change_time': self.change_time
+            'change_time': self.change_time,
+            "sensors": [],
+            "effectors": []
         }
         if get_user:
             detail['user'] = self.user.format_detail()
-
+        if self.sensors is not None:
+            sensor_resp = list()
+            for sensor in self.sensors:
+                sensor_resp.append(sensor.format_detail())
+            detail['sensors'] = sensor_resp
+        if self.effectors is not None:
+            effector_resp = list()
+            for effector in self.effectors:
+                effector_resp.append(effector.format_detail())
+            detail['effectors'] = effector_resp
         return detail
 
 
@@ -212,9 +224,13 @@ class Sensor(Base):
             "uid": self.uid.hex,
             "id": self.id,
             "type": self.type,
+            "functions": []
         }
-        #if self.functions:
-        #    detail['functions'] = self.functions
+        if self.functions is not None:
+            function_resp = list()
+            for function in self.functions:
+                function_resp.append(function.format_detail())
+            detail['functions'] = function_resp
         return detail
 
 
@@ -248,10 +264,14 @@ class Effector(Base):
         detail = {
             "uid": self.uid,
             "id": self.id,
-            "type": self.type
+            "type": self.type,
+            "functions": []
         }
         if self.functions is not None:
-            detail['functions'] = self.functions
+            function_resp = list()
+            for function in self.functions:
+                function_resp.append(function.format_detail())
+            detail['functions'] = function_resp
         return detail
 
 

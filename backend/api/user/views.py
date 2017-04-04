@@ -67,7 +67,6 @@ class LoginHandler(base.APIBaseHandler):
                                locale_code=self.locale.code)
         if form.validate():
             user = form.kwargs['user']
-
             self.finish(json.dumps({
                 'auth': self.create_signed_value('uid', user.uid.hex).decode('utf-8'),
             }))

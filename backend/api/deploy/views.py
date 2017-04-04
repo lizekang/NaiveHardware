@@ -37,12 +37,17 @@ class DeployHandler(base.APIBaseHandler):
         task_list = self.get_task_list(self.current_user.projects)
         app_json_obj = self.generate_config(self.get_config()).generate_app_json()
         package_json_obj = self.generate_config(self.get_config()).generate_package_json()
+        user_obj = self.generate_user_obj()
         headers = {'Content-type': "application/json"}
         conn = httplib2.Http()
         server_url = "http://" + server_ip + "/task"
         resp, content = conn.request(server_url, 'POST',
                                      headers=headers,
-                                     body=json.dumps([task_list, {"device_ip": device_ip}, app_json_obj, package_json_obj]))
+                                     body=json.dumps([task_list,
+                                                      {"device_ip": device_ip},
+                                                      app_json_obj,
+                                                      package_json_obj,
+                                                      user_obj]))
         if resp['status'] == '200':
             self.finish(json.dumps({"errno": True, "data": task_list}))
         else:
@@ -91,6 +96,14 @@ class DeployHandler(base.APIBaseHandler):
     def generate_config(objects):
         obj = RuffJson(json.dumps(objects))
         return obj
+
+    @base.db_success_or_pass
+    def generate_user_obj(self):
+        user_obj = {
+            "username": self.current_user.username,
+            "password": self.current_user.password
+        }
+        return user_obj
 
 
 class RuffJson(object):
