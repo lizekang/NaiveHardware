@@ -35,6 +35,7 @@ class DeployHandler(base.APIBaseHandler):
                                   uid=uuid)
         self.set_run(project)
         task_list = self.get_task_list(self.current_user.projects)
+        driver_obj = self.get_driver(self.current_user.projects)
         app_json_obj = self.generate_config(self.get_config()).generate_app_json()
         package_json_obj = self.generate_config(self.get_config()).generate_package_json()
         user_obj = self.generate_user_obj()
@@ -43,8 +44,9 @@ class DeployHandler(base.APIBaseHandler):
         server_url = "http://" + server_ip + "/task"
         resp, content = conn.request(server_url, 'POST',
                                      headers=headers,
-                                     body=json.dumps([task_list,
-                                                      {"device_ip": device_ip},
+                                     body=json.dumps([{"device_ip": device_ip},
+                                                      task_list,
+                                                      driver_obj,
                                                       app_json_obj,
                                                       package_json_obj,
                                                       user_obj]))
@@ -65,15 +67,57 @@ class DeployHandler(base.APIBaseHandler):
                 sensors = list()
                 effectors = list()
                 for sensor in project.sensors:
-                    sensors.append(sensor.id)
+                    if sensor.functions is not None:
+                        for function in sensor.functions:
+                            sensors.append({"id": sensor.id.encode().decode(), 'args': function.args.encode().decode()})
                 for effector in project.effectors:
-                    effectors.append(effector.id)
+                    if effector.functions is not None:
+                        for function in effector.functions:
+                            effectors.append({"id": effector.id.encode().decode(), 'args': function.args.encode().decode()})
                 task = {
                     'effectors': effectors,
-                    'sensors': sensors
+                    'sensors': sensors,
+                    'id': project.project_name.encode().decode()
                 }
                 task_list.append(task)
         return task_list
+
+    @staticmethod
+    def get_driver(projects):
+        def key1(x):
+            if x['functionlist'][0]['function'] == 'on':
+                return 2
+            if x['functionlist'][0]['function'] == 'time':
+                return 1
+            else:
+                return 0
+        driver = {}
+        sensors = list()
+        effectors = list()
+        for project in projects:
+            if project.is_run is True:
+                for sensor in project.sensors:
+                    functions = list()
+                    for function in sensor.functions:
+                        functions.append({'args': function.args,
+                                          'function': function.function_name})
+                    sensors.append({
+                        'functionlist': functions,
+                        'id': sensor.id
+                    })
+                for effector in project.effectors:
+                    functions = list()
+                    for function in effector.functions:
+                        functions.append({'args': function.args,
+                                          'function': function.function_name})
+                    effectors.append({
+                        'functionlist': functions,
+                        'id': effector.id
+                    })
+        driver['effectors'] = effectors
+        driver['sensors'] = sensors
+        driver['sensors'] = sorted(driver['sensors'], key=key1, reverse=True)
+        return driver
 
     @base.db_success_or_pass
     def get_config(self):
@@ -125,6 +169,7 @@ class RuffJson(object):
         for task in command_list:
             print(task['driver'])
             try:
+                print('https://raw.githubusercontent.com/ruff-drivers/'+task['driver']+'/master/driver.json')
                 html = urlopen('https://raw.githubusercontent.com/ruff-drivers/'+task['driver']+'/master/driver.json')
                 json_str = html.read().decode('utf-8')
                 json_ob = json.loads(json_str)

@@ -31,7 +31,7 @@ class ProjectForm(Form):
     project_name = StringField('project_name')
     description = TextAreaField('description')
     authority = BooleanField('authority')
-    change_time = util.get_utc_time()
+    # change_time = StringField('change_time')
 
 
 class ProjectsForm(Form, baseForms.SliceMixin):
@@ -44,3 +44,12 @@ class ProjectsForm(Form, baseForms.SliceMixin):
         ("desc", "desc"),
     ])
 
+
+class SensorAndEffectorForm(Form):
+    id = StringField('id')
+    type = StringField('type')
+
+
+class FunctionForm(Form):
+    function_name = StringField("function_name")
+    args = StringField("args")

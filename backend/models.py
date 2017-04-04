@@ -120,8 +120,12 @@ class User(Base):
         detail = {
             'uid': self.uid.hex,
             'name': self.username,
-            'nick_name': self.nick_name
+            'nick_name': self.nick_name,
+            'projects': []
         }
+        if self.projects is not None:
+            for project in self.projects:
+                detail['projects'] = project.format_detail()
         return detail
 
 
@@ -180,8 +184,6 @@ class Project(Base):
             "sensors": [],
             "effectors": []
         }
-        if get_user:
-            detail['user'] = self.user.format_detail()
         if self.sensors is not None:
             sensor_resp = list()
             for sensor in self.sensors:

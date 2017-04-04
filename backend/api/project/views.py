@@ -85,6 +85,19 @@ class UserProjectsHandler(base.APIBaseHandler):
         self.session.add(project)
         return project
 
+    @staticmethod
+    def split_json_args(json_args):
+        project_json = {
+            "project_name": json_args['project_name'],
+            "description": json_args['description'],
+            "authority": json_args['authority'],
+            "change_time": util.get_utc_time(),
+            'uid': json_args['uid']
+        }
+        sensor_json = json_args['sensors']
+        effector_json = json_args['effector']
+
+
 
 class UserProjectHandler(base.APIBaseHandler):
     """
