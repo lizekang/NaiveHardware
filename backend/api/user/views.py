@@ -44,7 +44,7 @@ class RegisterHandler(base.APIBaseHandler):
     @base.db_success_or_pass
     def create_user(self, form):
         number = self.session.query(func.max(models.User.number)).first()[0] + 1
-
+        print(form.username.data)
         user = models.User(username=form.username.data,
                            number=number,
                            nick_name=form.nick_name.data)

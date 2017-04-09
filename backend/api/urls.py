@@ -28,6 +28,7 @@ urls = [
     #  "/function/(?P<function_uuid>[0-9a-fA-F]{32})",
     #  "function.EffectorFunctionHandler"),
     (r"/user/project/(?P<uuid>[0-9a-fA-F]{32})/deploy", "deploy.DeployHandler"),
+    (r"/user/project/(?P<uuid>[0-9a-fA-F]{32})/undeploy", "deploy.UnDeployHandler"),
     (r"/user/projects", "project.UserProjectsHandler"),
     (r"/user/project", "project.UserProjectHandler"),
 ]

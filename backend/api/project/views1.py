@@ -294,7 +294,7 @@ class UserProjectHandler(base.APIBaseHandler):
             for sensor_function_json in sensor_json['functions']:
                 function = self.create_sensor_function(sensor_function_json, sensor)
                 functions.append(function.format_detail())
-            sensors.append(sensor.format_detail())
+            sensors.append({"id": sensor.id, "type": sensor.type, "functions": functions})
         effectors = []
         for effector_json in format_json['effector_json']['effectors'][0]:
             effector = self.create_effector(effector_json, project)
@@ -302,7 +302,7 @@ class UserProjectHandler(base.APIBaseHandler):
             for effector_function_json in effector_json['functions']:
                 function = self.create_effector_function(effector_function_json, effector)
                 functions.append(function.format_detail())
-            effectors.append(effector.format_detail())
+            effectors.append({"id": effector.id, "type": effector.type, "functions": functions})
         response['sensors'] = sensors
         response['effectors'] = effectors
         self.finish(json.dumps(

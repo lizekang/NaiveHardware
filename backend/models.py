@@ -123,9 +123,11 @@ class User(Base):
             'nick_name': self.nick_name,
             'projects': []
         }
+        projects = []
         if self.projects is not None:
             for project in self.projects:
-                detail['projects'] = project.format_detail()
+                projects.append(project.format_detail())
+        detail['projects'] = projects
         return detail
 
 
@@ -264,7 +266,7 @@ class Effector(Base):
 
     def format_detail(self):
         detail = {
-            "uid": self.uid,
+            "uid": self.uid.hex,
             "id": self.id,
             "type": self.type,
             "functions": []

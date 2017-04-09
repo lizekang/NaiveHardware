@@ -4,6 +4,7 @@ from flask import Flask, jsonify, make_response, request, json
 import httplib2
 import json
 import hashlib
+import urllib.request as req
 
 app = Flask(__name__)
 site_settings = {
@@ -41,26 +42,34 @@ def deploy():
     app_json = request.json[3]
     package_json = request.json[4]
     user_json = request.json[5]
+    # with open("./task-list1.json", "w") as fp:
+    #     fp.write(jsonify(str(task_list)))
+    # with open("./drivers1.json", "w") as fp:
+    #     fp.write(jsonify(str(driver)))
     with open("./user.json", "r") as fp:
         user = json.loads(fp.read())
+    # with open("./drivers.json", "r") as fp:
+    #     driver = json.loads(fp.read())
+    # with open("./task-list.json", "r") as fp:
+    #     task_list = json.loads(fp.read())
     if user_json['username'] == user['username'] and check_password(user['password'], user_json['password']):
-        headers = {"Content-type": "application/json"}
-        conn = httplib2.Http()
-        url = "http://" + device_ip
-        resp, content = conn.request(url, 'POST',
-                                     headers=headers,
-                                     body=json.dumps([task_list,
-                                                      driver,
-                                                      app_json,
-                                                      package_json]))
-        if resp['status'] == '200':
-            return jsonify({'errno': True})
-        else:
-            return jsonify({'errno': False})
+        post = json.dumps([task_list, driver, app_json, package_json]).encode()
+        # headers = {"Content-type": "application/json"}
+        # conn = httplib2.Http()
+        # url = "http://" + device_ip
+        # resp, content = conn.request(url, 'POST',
+        #                              headers=headers,
+        #                              body=json.dumps([task_list,
+        #                                               driver,
+        #                                               app_json,
+        #                                               package_json]).encode())
+        url = "http://192.168.43.111:3000"
+        req.urlopen(url, data=post)
+        return jsonify({'errno': True})
         # return jsonify({'errno': True})
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=8080)
+    app.run(host="127.0.0.1", port=8081)
 
 
 
